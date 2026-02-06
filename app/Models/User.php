@@ -17,11 +17,14 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    protected $table = 'usuarios';
+    protected $primaryKey = 'id_usuario';
+
     protected $fillable = [
         'nombre',
-        'email',
-        'password',
         'apellidos',
+        'correo',
+        'password',
         'tipo',
     ];
 
@@ -47,17 +50,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    protected function getKeyName()
-    {
-        return 'id_usuario';
-    }
+   
     public function isAdmin(): bool
-    {
-        if $this->tipo === 'admin'{
-            return true;
-        } else {
-            return false;
+        {
+            return $this->tipo === 'admin';
         }
-    }
 
 }

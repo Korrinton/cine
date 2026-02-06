@@ -1,0 +1,119 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;//<--- Para las validaciones de la contraseña
+use App\Models\User; // <--- Importante: esto permite hablar con la base de datos
+use Illuminate\Support\Facades\Hash; // <--- Importante: esto permite encriptar la clave
+use Illuminate\Support\Facades\Auth;
+
+class UsuariosController extends Controller
+{
+    public function mostrarLogin()
+        {
+            return view('usuarios.login');
+        }
+
+    public function mostrarRegistro() 
+        {
+            return view('usuarios.registro');
+        }
+
+    public function almacenar(Request $request)
+        {
+        //dd($request->all());
+        $request->validate([
+            'correo'   => 'required|email|unique:usuarios,correo',
+            'password' => ['required', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase()],
+            ], [
+                'correo.unique' => 'Este correo ya está registrado.',
+                'correo.required' => 'La dirección de correo es imprescindible para crear la cuenta.',
+                'correo.email'    => 'El formato de correo no es válido.',
+                'password' => 'La contraseña debe tener exactamente 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
+                'password.required' => 'Indica tu contraseña.'
+                ]);
+
+        User::create([
+                'nombre'    => $request->nombre,
+                'apellidos' => $request->apellidos, 
+                'correo'    => $request->correo,
+                'password'  => Hash::make($request->password),
+                'tipo'      => 'cliente',
+            ]);
+
+        return redirect('/login')->with('success', '¡Usuario dado de alta!'); 
+        }
+
+    public function acceder(Request $request)
+        {
+       $request->validate([
+            'correo'   => 'required|email',
+            'password' => ['required', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase()],
+            ], [
+                'correo.required' => 'La dirección de correo es imprescindible para entrar en la cuenta.',
+                'correo.email'    => 'El formato de correo no es válido.',
+                'password' => 'La contraseña debe tener exactamente 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
+                'password.required' => 'Indica tu contraseña.'
+        ]);
+
+        $credenciales = [
+            'correo'   => $request->correo,
+            'password' => $request->password,
+        ];
+
+        // 2. Intentamos el login
+        if (Auth::attempt($credenciales)) {
+            $request->session()->regenerate();
+            return redirect()->intended('/dashboard'); // Cámbialo por tu ruta de bienvenida
+        }
+
+        // 3. Si falla, volvemos atrás con error
+        return back()->withErrors(['error' => 'El correo o la contraseña no coinciden.',
+        ]);
+    }
+
+    public function editar()
+        {
+            // Obtenemos los datos del usuario identificado
+            $usuario = Auth::user();
+            return view('usuarios.editar', compact('usuario'));
+        }
+
+public function actualizar(Request $request)
+    {
+        // 1. Identificamos al usuario
+        $usuario = Auth::user();
+
+        // 2. Actualizamos los campos de texto
+        $usuario->nombre = $request->nombre;
+        $usuario->apellidos = $request->apellidos;
+
+        // 3. Lógica de la contraseña: 
+        // Solo si el usuario ha escrito algo en el campo password, la cambiamos.
+        if ($request->filled('password')) {
+            $usuario->password = Hash::make($request->password);
+        }
+
+        // 4. Guardamos los cambios en la base de datos (Docker/MySQL)
+        $usuario->save();
+
+        // 5. Redirigimos atrás con un mensaje de éxito
+        return back()->with('success', '¡Perfil actualizado correctamente!');
+    }
+
+    public function salir(Request $request)
+        {
+            // 1. Cierra la sesión en el sistema Auth
+            Auth::logout();
+
+            // 2. Invalida la sesión actual del usuario
+            $request->session()->invalidate();
+
+            // 3. Regenera el token CSRF para el próximo que use el PC
+            $request->session()->regenerateToken();
+
+            // 4. Redirige a donde quieras (normalmente al login o inicio)
+            return redirect('/login');
+        }
+}
