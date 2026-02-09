@@ -13,3 +13,75 @@
     padding: 10px;
     font-weight: bold;
 }
+.btn-toggle-eye {
+    z-index: 10;
+}
+
+
+
+
+/*para evitar que se desplzae el icono del ojo*/
+.btn-toggle-password {
+    position: absolute !important;
+    /* Un input form-floating mide 58px. La mitad son 29px. */
+    top: 29px !important; 
+    right: 15px !important;
+    transform: translateY(-50%) !important;
+    z-index: 10;
+    color: #6c757d;
+}
+
+/* 1. Quitamos el icono de exclamación que Bootstrap inyecta al fallar */
+.form-control.is-invalid {
+    background-image: none !important;
+    border-color: #dc3545 !important;
+    padding-right: 45px !important; /* Espacio para que el texto no pise el ojo */
+}
+
+/* 2. Opcional: El ojo se vuelve rojo si hay error */
+.form-control.is-invalid ~ .btn-toggle-password {
+    color: #dc3545;
+}
+
+
+/*imagen del usuario*/
+.avatar-circle {
+    width: 35px;
+    height: 35px;
+    background-color: #0d6efd; /* Color de fondo (puedes cambiarlo) */
+    text-align: center;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.avatar-circle:hover {
+    filter: brightness(1.1); /* Brilla un poco */
+    cursor: pointer;
+    transform: scale(1.05); /* Se agranda ligeramente */
+    transition: all 0.2s ease;
+}
+.initials {
+    position: relative;
+    font-size: 16px; /* Tamaño de la letra */
+    line-height: 1;
+    color: #fff;
+    font-weight: bold;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* Quita la flechita del dropdown */
+.nav-link.dropdown-toggle::after {
+    display: none;
+}
+
+
+.no-select {
+    pointer-events: none; /* Evita clics y selección */
+    user-select: none;    /* Evita que se pueda sombrear el texto */
+    background-color: #f8f9fa; /* Color grisáceo para indicar bloqueo */
+}

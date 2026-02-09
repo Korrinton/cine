@@ -22,19 +22,30 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @enderror
-                <form action="{{ route('login.post') }}" method="POST">
+                <form action="{{ route('login.post') }}" method="POST" class="slow-submit" >
                     @csrf
                     <div class="form-floating mb-3">
                         <input type="email" name="correo" class="form-control @error('correo') is-invalid @enderror" id="floatCorreo" placeholder="nombre@ejemplo.com" value="{{ old('correo') }}">
-                        <label for="floatCorreo">Dirección de correo</label>
+                        <label for="floatCorreo">Correo electrónico</label>
                         @error('correo')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                            <div class="invalid-feedback">{{ $message }} </div>
+                        @enderror                        
                     </div>
 
-                    <div class="form-floating mb-3">
-                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="floatPassword" placeholder="Contraseña">
+                    <div class="form-floating mb-3 position-relative has-validation">
+                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" 
+                            id="floatPassword" placeholder="Contraseña">
                         <label for="floatPassword">Contraseña</label>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" name="remember" id="remember">
+                            <label class="form-check-label" for="remember">Recuérdame</label>
+                        </div>
+
+                        <button type="button" id="togglePassword" 
+                                class="btn-toggle-password border-0 bg-transparent" tabindex="-1">
+                            <i class="bi bi-eye" id="eyeIcon"></i>
+                        </button>
+
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -51,4 +62,5 @@
         </div>
     </div>
 </div>
+<script src="{{ asset('js/usuarios-script.js') }}"></script>
 @endsection

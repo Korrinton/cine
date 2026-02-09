@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nombre')->nullable();          
             $table->string('apellidos')->nullable();       
             $table->enum('tipo', ['admin', 'cliente']); 
+            $table->rememberToken();//para el recuérdame del login
             $table->timestamps();// Campos de fecha automáticos
         });        
     }
@@ -25,11 +26,6 @@ return new class extends Migration
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::dropIfExists('usuarios');
-        Schema::dropIfExists('reservas');
-        Schema::dropIfExists('eventos');
-        Schema::dropIfExists('salas');
-        Schema::dropIfExists('cache');
-        
+        Schema::dropIfExists('usuarios');        
     }
 };

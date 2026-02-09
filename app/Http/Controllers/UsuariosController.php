@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;//<--- Para las validaciones de la contraseña
-use App\Models\User; // <--- Importante: esto permite hablar con la base de datos
+use App\Models\Usuario; // <--- Importante: esto permite hablar con la base de datos
 use Illuminate\Support\Facades\Hash; // <--- Importante: esto permite encriptar la clave
 use Illuminate\Support\Facades\Auth;
 
@@ -12,6 +12,9 @@ class UsuariosController extends Controller
 {
     public function mostrarLogin()
         {
+            if (!session()->has('url.intended')) {
+                session(['url.intended' => url()->previous()]);
+            }
             return view('usuarios.login');
         }
 
@@ -26,12 +29,14 @@ class UsuariosController extends Controller
         $request->validate([
             'correo'   => 'required|email|unique:usuarios,correo',
             'password' => ['required', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase()],
+            'nombre'     => 'required|string',
             ], [
                 'correo.unique' => 'Este correo ya está registrado.',
                 'correo.required' => 'La dirección de correo es imprescindible para crear la cuenta.',
                 'correo.email'    => 'El formato de correo no es válido.',
                 'password' => 'La contraseña debe tener exactamente 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
-                'password.required' => 'Indica tu contraseña.'
+                'password.required' => 'Indica tu contraseña.',
+                'nombre.required' => 'Indica tu nombre.'
                 ]);
 
         User::create([
@@ -49,26 +54,28 @@ class UsuariosController extends Controller
         {
        $request->validate([
             'correo'   => 'required|email',
-            'password' => ['required', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase()],
+            'password' => 'required', 
+//            'password' => ['required', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase()],
             ], [
                 'correo.required' => 'La dirección de correo es imprescindible para entrar en la cuenta.',
                 'correo.email'    => 'El formato de correo no es válido.',
-                'password' => 'La contraseña debe tener exactamente 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
                 'password.required' => 'Indica tu contraseña.'
         ]);
+
+        $remember = $request->has('remember');
 
         $credenciales = [
             'correo'   => $request->correo,
             'password' => $request->password,
         ];
 
-        // 2. Intentamos el login
-        if (Auth::attempt($credenciales)) {
+        //Intentamos el login
+        if (Auth::attempt($credenciales,$remember)) {
             $request->session()->regenerate();
             return redirect()->intended('/dashboard'); // Cámbialo por tu ruta de bienvenida
         }
 
-        // 3. Si falla, volvemos atrás con error
+        //Si falla, volvemos atrás con error
         return back()->withErrors(['error' => 'El correo o la contraseña no coinciden.',
         ]);
     }
@@ -82,6 +89,12 @@ class UsuariosController extends Controller
 
 public function actualizar(Request $request)
     {
+        $request->validate([
+            'password' => ['nullable', 'sometimes', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase()]
+        ], [
+            'password' => 'La contraseña debe tener exactamente 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
+        ]);
+    
         // 1. Identificamos al usuario
         $usuario = Auth::user();
 
