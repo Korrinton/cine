@@ -17,12 +17,12 @@
                     </div>
                 @endif
 
-                <form action="{{ route('perfil.actualizar') }}" method="POST" class="slow-submit">
+                <form action="{{ route('profile.update') }}" method="POST" class="slow-submit">
                     @csrf
                     @method('PUT')
 
                     <div class="form-floating mb-3">
-                        <input type="text" name="nombre" class="form-control @error('nombre') is-invalid @enderror" id="floatName" placeholder="Tu nombre" value="{{ $usuario->nombre }}" required>
+                        <input type="text" name="nombre" class="form-control @error('nombre') is-invalid @enderror" id="floatName" placeholder="Tu nombre" value="{{ old('nombre', $usuario->nombre) }}" required>
                         <label for="floatName">Nombre</label>                        
                         @error('nombre')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="text" name="apellidos" class="form-control" id="floatApellidos" placeholder="Apellidos" value="{{ $usuario->apellidos }}">
+                        <input type="text" name="apellidos" class="form-control" id="floatApellidos" placeholder="Apellidos" value="{{ old('apellidos', $usuario->apellidos) }}">
                         <label for="floatApellidos">Apellidos</label>
                     </div>
 
@@ -45,7 +45,7 @@
 
                     <div class="form-floating mb-3 position-relative">
                         <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" 
-                            id="floatPassword" placeholder="Dejar en blanco para no cambiar">
+                            id="floatPassword" placeholder="Dejar en blanco para no cambiar"> 
                         <label for="floatPassword">Nueva contraseña</label>
                         
                         <button type="button" id="togglePassword" 
@@ -57,7 +57,19 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
+                    <div class="form-floating mb-3 position-relative">
+                        <input type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror"" 
+                            id="floatPasswordConfirm" placeholder="Repetir nueva contraseña">
+                        <label for="floatPasswordConfirm">Confirmar nueva contraseña</label>
+                        
+                        <button type="button" id="togglePasswordConfirm" 
+                                class="btn-toggle-password position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent me-3">
+                            <i class="bi bi-eye" id="eyeIconConfirm"></i>
+                        </button>
+                        @error('password_confirmation')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
 
                     <div class="d-grid mt-4">

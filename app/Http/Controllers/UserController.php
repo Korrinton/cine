@@ -3,32 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules\Password;//<--- Para las validaciones de la contraseña
-use App\Models\Usuario; // <--- Importante: esto permite hablar con la base de datos
-use Illuminate\Support\Facades\Hash; // <--- Importante: esto permite encriptar la clave
+use Illuminate\Validation\Rules\Password;//Para las validaciones de la contraseña
+use App\Models\User; 
+use Illuminate\Support\Facades\Hash; //Esto permite encriptar la clave
 use Illuminate\Support\Facades\Auth;
 
-class UsuariosController extends Controller
+class UserController extends Controller
 {
-    public function mostrarLogin()
+    public function login()
         {
             if (!session()->has('url.intended')) {
                 session(['url.intended' => url()->previous()]);
             }
-            return view('usuarios.login');
+            return view('users.login');
         }
 
-    public function mostrarRegistro() 
+    public function create() 
         {
-            return view('usuarios.registro');
+            return view('users.create');
         }
 
-    public function almacenar(Request $request)
+    public function store(Request $request)
         {
         //dd($request->all());
         $request->validate([
             'correo'   => 'required|email|unique:usuarios,correo',
-            'password' => ['required', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase()],
+            'password' => ['required', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase(),'confirmed'],
             'nombre'     => 'required|string',
             ], [
                 'correo.unique' => 'Este correo ya está registrado.',
@@ -50,7 +50,7 @@ class UsuariosController extends Controller
         return redirect('/login')->with('success', '¡Usuario dado de alta!'); 
         }
 
-    public function acceder(Request $request)
+    public function authenticate(Request $request)
         {
        $request->validate([
             'correo'   => 'required|email',
@@ -80,18 +80,20 @@ class UsuariosController extends Controller
         ]);
     }
 
-    public function editar()
+    public function edit()
         {
             // Obtenemos los datos del usuario identificado
             $usuario = Auth::user();
-            return view('usuarios.editar', compact('usuario'));
+            return view('users.edit', compact('usuario'));
         }
 
-public function actualizar(Request $request)
+public function update(Request $request)
     {
         $request->validate([
-            'password' => ['nullable', 'sometimes', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase()]
+            'password' => ['nullable', 'sometimes', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase()],
+            'password_confirmation' => 'same:password'
         ], [
+            'password_confirmation.same' => 'Las contraseñas no coinciden.',
             'password' => 'La contraseña debe tener exactamente 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
         ]);
     
@@ -108,14 +110,14 @@ public function actualizar(Request $request)
             $usuario->password = Hash::make($request->password);
         }
 
-        // 4. Guardamos los cambios en la base de datos (Docker/MySQL)
+        // 4. Guardamos los cambios en la base de datos
         $usuario->save();
 
         // 5. Redirigimos atrás con un mensaje de éxito
         return back()->with('success', '¡Perfil actualizado correctamente!');
     }
 
-    public function salir(Request $request)
+    public function logout(Request $request)
         {
             // 1. Cierra la sesión en el sistema Auth
             Auth::logout();

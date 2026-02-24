@@ -30,7 +30,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('perfil.editar') }}">
+                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
                                     <i class="bi bi-person-gear me-2"></i>Modificar Perfil
                                 </a>
                             </li>

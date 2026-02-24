@@ -34,6 +34,17 @@
                         @enderror
                     </div>
 
+                    <div class="form-floating mb-3 position-relative">
+                        <input type="password" name="password_confirmation" class="form-control" 
+                            id="floatPasswordConfirm" placeholder="Repetir Contraseña">
+                        <label for="floatPasswordConfirm">Repetir Contraseña</label>
+                        
+                        <button type="button" id="togglePasswordConfirm" 
+                                class="btn-toggle-password border-0 bg-transparent" tabindex="-1">
+                            <i class="bi bi-eye" id="eyeIconConfirm"></i>
+                        </button>
+                    </div>
+
                     <div class="form-floating mb-3">
                         <input type="text" name="nombre" class="form-control @error('nombre') is-invalid @enderror" id="floatName" placeholder="Tu nombre" value="{{ old('nombre') }}">
                         <label for="floatName">Nombre</label>                        

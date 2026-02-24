@@ -1,26 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const togglePassword = document.querySelector('#togglePassword');
-    const passwordInput = document.querySelector('#floatPassword');
-    const eyeIcon = document.querySelector('#eyeIcon');
-
-    togglePassword.addEventListener('click', function () {
-        // Cambiar el tipo de atributo
-        const isPassword = passwordInput.type === 'password';
-        console.log (isPassword);
-        passwordInput.type = isPassword ? 'text' : 'password';
-
-
-        
-        if (isPassword) {
-            eyeIcon.classList.replace('bi-eye', 'bi-eye-slash');
-        } else {
-            eyeIcon.classList.replace('bi-eye-slash', 'bi-eye');
-        }
-    });
+    activarOjo('#togglePassword', '#floatPassword', '#eyeIcon');
+    activarOjo('#togglePasswordConfirm', '#floatPasswordConfirm', '#eyeIconConfirm');
 
 
     const forms = document.querySelectorAll('.slow-submit'); // Usaremos esta clase para identificar qué formularios queremos bloquear
-
     forms.forEach(form => {
         form.addEventListener('submit', function () {
             const btn = form.querySelector('button[type="submit"]');
@@ -38,6 +21,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
+    const password = document.getElementById('floatPassword');
+    const confirm = document.getElementById('floatPasswordConfirm');
+
+    function validarCoincidencia() {
+        if (confirm.value === "") {
+            confirm.classList.remove('is-invalid', 'is-valid');
+        } else if (password.value === confirm.value) {
+            confirm.classList.remove('is-invalid');
+            confirm.classList.add('is-valid');
+        } else {
+            confirm.classList.remove('is-valid');
+            confirm.classList.add('is-invalid');
+        }
+    }
+
+    password.addEventListener('input', validarCoincidencia);
+    confirm.addEventListener('input', validarCoincidencia);
+
+
     document.querySelectorAll('.form-control').forEach(input => {
     input.addEventListener('input', () => {
         if (input.checkValidity()) {
@@ -49,3 +51,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+
+
+function activarOjo(botonId, inputId, iconoId) {
+    const btn = document.querySelector(botonId);
+    const input = document.querySelector(inputId);
+    const icono = document.querySelector(iconoId);
+
+    if (btn && input && icono) {
+        btn.addEventListener('click', function () {
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+
+            if (isPassword) {
+                icono.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                icono.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        });
+    }
+}

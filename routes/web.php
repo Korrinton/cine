@@ -1,18 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [UsuariosController::class, 'mostrarLogin'])->name('login');
-    Route::get('/registro', [UsuariosController::class, 'mostrarRegistro'])->name('registro');
-    Route::post('/registro', [UsuariosController::class, 'almacenar'])->name('register.store');
-    Route::post('/login', [UsuariosController::class, 'acceder'])->name('login.post');
+//rutas para usuarios no autenticados
+Route::controller(UserController::class)->middleware('guest')->group(function () {
+    Route::get('/registro', 'create')->name('register');
+    Route::post('/registro', 'store')->name('register.store');
+    Route::get('/login', 'login')->name('login');
+    Route::post('/login', 'authenticate')->name('login.post');
 });
-    Route::post('/logout', [UsuariosController::class, 'salir'])->name('logout');
-    Route::get('/perfil', [UsuariosController::class, 'editar'])->name('perfil.editar');
-    Route::put('/perfil', [UsuariosController::class, 'actualizar'])->name('perfil.actualizar');
+
+//rutas para usuarios autenticados
+Route::controller(UserController::class)->middleware('auth')->group(function () {
+    Route::post('/logout', 'logout')->name('logout');
+    Route::get('/perfil', 'edit')->name('profile.edit');
+    Route::put('/perfil', 'update')->name('profile.update');
+});
