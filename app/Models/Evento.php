@@ -14,10 +14,15 @@ class Evento extends Model
 
     //fillable para asignación masiva
     protected $fillable = [
+        'nombre',
         'id_pelicula',
         'id_sala',
         'horarios',
-        'asientos_disponibles'
+        'asientos_disponibles',
+        'precio',
+        'fecha_estreno',
+        'fecha_final',
+        
     ];
     //casts para convertir los campos a tipos específicos
     protected $casts = [

@@ -3,71 +3,80 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Sala;       
-use App\Models\Pelicula;
+use App\Models\Reserva;
+use App\Models\Evento;
+use App\Models\Cache;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class EventoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Muestra la vista de selección de asientos para un evento.
      */
-    public function index()
+    public function seleccionar($id_evento)
     {
-        //
-    }
-    public function create()
-    {
-        // Pasamos las salas y películas a la vista para rellenar los desplegables (<select>)
-        $salas = Sala::all();
-        $peliculas = Pelicula::all(); // Asegúrate de tener datos en esta tabla
+        $evento = Evento::with('sala')->findOrFail($id_evento);
 
-        return view('eventos.create', compact('salas', 'peliculas'));
+        // Obtenemos el estado de las sillas desde cache
+        $cache = Cache::where('id_sala', $evento->id_sala)->first();
+        $sillasOcupadas = $cache ? $cache->sillas : [];
+
+        return view('reservas.seleccionar', compact('evento', 'sillasOcupadas'));
     }
 
-    public function store(Request $request)
+    /**
+     * Procesa la reserva de los asientos seleccionados.
+     */
+    public function reservar(Request $request, $id_evento)
     {
-        // 1. Validar los datos de entrada
         $request->validate([
-            'id_pelicula' => 'required|exists:peliculas,id_pelicula',
-            'id_sala' => 'required|exists:salas,id_sala',
-            'horarios' => 'required|date'
+            'asientos' => 'required|array|min:1|max:8',
+            'asientos.*' => 'string',
         ]);
 
-        // 2. Obtener la sala para copiar su JSON de asientos
-        $sala = Sala::findOrFail($request->id_sala);
+        $evento = Evento::with('sala')->findOrFail($id_evento);
+        $asientosSeleccionados = $request->asientos;
 
-        // 3. Crear el evento
-        Evento::create([
-            'id_pelicula' => $request->id_pelicula,
-            'id_sala' => $request->id_sala,
-            'horarios' => $request->horarios,
-            'asientos_disponibles' => $sala->asientos
-        ]);
+        // Verificar que ningún asiento ya esté ocupado
+        $cache = Cache::where('id_sala', $evento->id_sala)->first();
+        $sillasOcupadas = $cache ? $cache->sillas : [];
 
-        // 4. Redirigir con mensaje de éxito
-        return redirect()->route('eventos.create')->with('success', 'Evento creado y asientos generados correctamente.');
-    } 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        $conflictos = array_intersect($asientosSeleccionados, $sillasOcupadas);
+        if (!empty($conflictos)) {
+            return back()->with('error', 'Algunos asientos ya fueron reservados: ' . implode(', ', $conflictos));
+        }
+
+        // Crear reservas
+        foreach ($asientosSeleccionados as $asiento) {
+            Reserva::create([
+                'id_evento'     => $evento->id_eventos,
+                'id_usuario'    => Auth::id(),
+                'fecha_reserva' => Carbon::today(),
+                'asiento'       => $asiento,
+            ]);
+        }
+
+        // Actualizar cache de sillas ocupadas
+        $nuevasOcupadas = array_merge($sillasOcupadas, $asientosSeleccionados);
+        if ($cache) {
+            $cache->update(['sillas' => $nuevasOcupadas]);
+        } else {
+            Cache::create([
+                'id_sala' => $evento->id_sala,
+                'sillas'  => $nuevasOcupadas,
+            ]);
+        }
+
+        return redirect()->route('reservas.confirmacion')
+                         ->with('success', 'Reserva confirmada: ' . implode(', ', $asientosSeleccionados));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Pantalla de confirmación.
      */
-    public function update(Request $request, string $id)
+    public function confirmacion()
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('reservas.confirmacion');
     }
 }

@@ -51,7 +51,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_usuario'); 
             $table->date('fecha_reserva'); 
             $table->timestamps();
-
+            $table->string('asiento')->nullable();
             $table->foreign('id_evento')->references('id_eventos')->on('eventos')->onDelete('cascade');
             $table->foreign('id_usuario')->references('id_usuario')->on('usuarios')->onDelete('cascade');
         });
