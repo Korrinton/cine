@@ -23,32 +23,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const password = document.getElementById('floatPassword');
     const confirm = document.getElementById('floatPasswordConfirm');
-
-    function validarCoincidencia() {
-        if (confirm.value === "") {
-            confirm.classList.remove('is-invalid', 'is-valid');
-        } else if (password.value === confirm.value) {
-            confirm.classList.remove('is-invalid');
-            confirm.classList.add('is-valid');
-        } else {
-            confirm.classList.remove('is-valid');
-            confirm.classList.add('is-invalid');
-        }
+    
+    if (password && confirm) {
+        password.addEventListener('input', validarCoincidencia);
+        confirm.addEventListener('input', validarCoincidencia);
     }
 
-    password.addEventListener('input', validarCoincidencia);
-    confirm.addEventListener('input', validarCoincidencia);
+
 
 
     document.querySelectorAll('.form-control').forEach(input => {
     input.addEventListener('input', () => {
         if (input.checkValidity()) {
             input.classList.remove('is-invalid');
-            //input.classList.add('is-valid');
         }
         });
     });
 
+/*
+    // Auto-abrir modal si hay errores de validación
+    const modalElement = document.getElementById('loginModal');
+    if (modalElement) {
+        const hasErrors = modalElement.querySelector('.is-invalid, .alert-danger');
+        
+        if (hasErrors) {
+            const loginModal = new bootstrap.Modal(modalElement);
+            loginModal.show();
+        }
+    }
+*/
 });
 
 
@@ -59,7 +62,8 @@ function activarOjo(botonId, inputId, iconoId) {
     const icono = document.querySelector(iconoId);
 
     if (btn && input && icono) {
-        btn.addEventListener('click', function () {
+            //alert("¡Botón encontrado!"); // <--- AÑADE ESTO
+            btn.addEventListener('click', function () {
             const isPassword = input.type === 'password';
             input.type = isPassword ? 'text' : 'password';
 
@@ -69,5 +73,17 @@ function activarOjo(botonId, inputId, iconoId) {
                 icono.classList.replace('bi-eye-slash', 'bi-eye');
             }
         });
+    }
+}
+
+function validarCoincidencia() {
+    if (confirm.value === "") {
+        confirm.classList.remove('is-invalid', 'is-valid');
+    } else if (password.value === confirm.value) {
+        confirm.classList.remove('is-invalid');
+        confirm.classList.add('is-valid');
+    } else {
+        confirm.classList.remove('is-valid');
+        confirm.classList.add('is-invalid');
     }
 }
