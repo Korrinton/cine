@@ -8,6 +8,7 @@ return new class extends Migration
 {
     public function up(): void {
         // 1. USUARIOS
+        /*
         Schema::create('usuarios', function (Blueprint $table) {
             $table->id('id_usuario'); 
             $table->string('nombre');
@@ -18,8 +19,9 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
-
+    */
         // 2. SALAS
+        /*
         Schema::create('salas', function (Blueprint $table) {
             $table->id('id_sala');
             $table->string('nombre');
@@ -28,8 +30,9 @@ return new class extends Migration
             $table->integer('sillas');
             $table->timestamps();
         });
-
+*/
         // 3. EVENTOS
+        /*
         Schema::create('eventos', function (Blueprint $table) {
             $table->id('id_eventos'); 
             $table->string('nombre'); 
@@ -41,7 +44,7 @@ return new class extends Migration
             
             $table->foreign('id_sala')->references('id_sala')->on('salas')->onDelete('cascade');
         });
-
+*/
         // 4. RESERVAS
         Schema::create('reservas', function (Blueprint $table) {
             $table->id('id_reserva'); 

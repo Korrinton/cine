@@ -44,6 +44,7 @@ return new class extends Migration
             $table->foreign('id_sala')->references('id_sala')->on('salas')->onDelete('cascade');
         });        
     //create reservations table
+    /*
         Schema::create('reservas', function (Blueprint $table) {
             $table->id('id_reserva'); 
             $table->unsignedBigInteger('id_evento'); 
@@ -53,8 +54,9 @@ return new class extends Migration
 
             $table->foreign('id_evento')->references('id_eventos')->on('eventos')->onDelete('cascade');
             $table->foreign('id_usuario')->references('id_usuario')->on('usuarios')->onDelete('cascade');
-        });
+        });*/
     }
+        
     /**
      * Reverse the migrations.
      */
