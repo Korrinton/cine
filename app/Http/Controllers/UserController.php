@@ -28,13 +28,13 @@ class UserController extends Controller
         //dd($request->all());
         $request->validate([
             'correo'   => 'required|email|unique:usuarios,correo',
-            'password' => ['required', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase(),'confirmed'],
+            'password' => ['required', Password::min(8)->max(255)->letters()->numbers()->symbols()->mixedCase(),'confirmed'],
             'nombre'     => 'required|string',
             ], [
                 'correo.unique' => 'Este correo ya está registrado.',
                 'correo.required' => 'La dirección de correo es imprescindible para crear la cuenta.',
                 'correo.email'    => 'El formato de correo no es válido.',
-                'password' => 'La contraseña debe tener exactamente 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
+                'password' => 'La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
                 'password.required' => 'Indica tu contraseña.',
                 'nombre.required' => 'Indica tu nombre.'
                 ]);
@@ -94,7 +94,7 @@ public function update(Request $request)
             'password_confirmation' => 'same:password'
         ], [
             'password_confirmation.same' => 'Las contraseñas no coinciden.',
-            'password' => 'La contraseña debe tener exactamente 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
+            'password' => 'La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
         ]);
     
         // 1. Identificamos al usuario
