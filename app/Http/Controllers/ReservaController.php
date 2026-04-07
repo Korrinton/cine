@@ -23,8 +23,7 @@ class ReservaController extends Controller
 
         //Se recuperan los asientos ocupados para este evento. En fila-asiento
         $ocupados = Reserva::where('id_evento', $id_evento)
-            ->get(['fila', 'asiento'])
-            ->map(fn($r) => $r->fila . '-' . $r->asiento)
+            ->pluck('asiento')
             ->toArray();
 
         return view('reservas.mapa', compact('evento', 'ocupados'));
@@ -56,9 +55,8 @@ class ReservaController extends Controller
             Reserva::create([
                 'id_evento' => $id_evento,
                 'id_usuario' => $id_usuario,
-                'fila' => $asiento['f'],
-                'asiento' => $asiento['s'],
-                'fecha_reserva' => now()
+                'asiento' => $asiento['f'] . '-' . $asiento['s'], 
+                'fecha_reserva' => now(),
             ]);
         }
 

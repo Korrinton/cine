@@ -1,29 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<!--
-
-para crear una reserva deberán existir en la base de datos por lo menos
-una sala y un evento vinculado a ella
-
-por ejemplo
-INSERT INTO salas (id_sala, nombre, aforo, filas, sillas, created_at, updated_at) 
-VALUES (1, 'Sala 1', 100, 10, 10, NOW(), NOW());
-
-INSERT INTO eventos (id_eventos, nombre, id_sala, precio, fecha_estreno, fecha_final, created_at, updated_at) 
-VALUES (1, 'Kill Bill', 1, 12, '2026-03-27', '2026-04-20', NOW(), NOW());
-
-para acceder a probar la funcionalidad se debe haber iniciado sesión, de momento,
-debe ser mediante la url y la id del evento
-por ejemplo
-http://localhost:8000/reservar/1
-
-esto busca la sala vinculada al evento y genera un mapa visual, una vez seleccionados los
-asientos y creada la reserva, crea los registros y los vincula a la id de usuario
-
--->
-
-
 <style>
     .cine-grid { 
         display: grid; gap: 8px; margin: 20px auto; justify-content: center; 
@@ -51,7 +28,7 @@ asientos y creada la reserva, crea los registros y los vincula a la id de usuari
 </style>
 
 <div class="row justify-content-center mt-5">
-    <div class="col-md-8">
+    <div class="col-12 d-flex justify-content-center">
         <div class="card shadow border-0">
             {{-- Encabezado idéntico al Login (Negro con texto blanco) --}}
             <div class="card-header bg-dark text-white text-center py-3 d-flex justify-content-between align-items-center px-4">
