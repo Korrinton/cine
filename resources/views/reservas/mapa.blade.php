@@ -32,7 +32,7 @@
         <div class="card shadow border-0">
             {{-- Encabezado idéntico al Login (Negro con texto blanco) --}}
             <div class="card-header bg-dark text-white text-center py-3 d-flex justify-content-between align-items-center px-4">
-                <h4 class="mb-0">Reserva: {{ $evento->nombre }}</h4>
+                <h4 class="mb-0">Reserva: {{ $evento->pelicula_titulo }} - {{ $evento->sala_nombre }}</h4>
             </div>
 
             <div class="card-body p-4 text-center">
@@ -68,14 +68,14 @@
                     <p class="small text-muted" id="lista-asientos">Ninguno seleccionado</p>
                 </div>
 
-                <form action="{{ route('reservas.store') }}" method="POST" id="form-reserva" class="mt-4">
+                <form action="{{ route('reservas.confirmacion') }}" method="POST" id="form-reserva" class="mt-4">
                     @csrf
                     <input type="hidden" name="id_evento" value="{{ $evento->id_eventos }}">
                     <input type="hidden" name="asientos_json" id="asientos_json">
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                         <a href="{{ url('/dashboard') }}" class="btn btn-outline-secondary px-4">Cancelar</a>
-                        <button type="submit" id="btn-confirmar" class="btn btn-primary px-5" disabled>
+                        <button type="submit" id="btn-confirmar" class="btn btn-success px-5" disabled>
                             Confirmar Reserva
                         </button>
                     </div>
