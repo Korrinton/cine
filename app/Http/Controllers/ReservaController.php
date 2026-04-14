@@ -18,7 +18,7 @@ class ReservaController extends Controller
             ->first();
 
         if (!$evento) {
-            return redirect('/dashboard')->withErrors(['error' => 'Este evento no existe.']);
+            return redirect('/')->withErrors(['error' => 'Este evento no existe.']);
         }
 
         //Se recuperan los asientos ocupados para este evento. En fila-asiento

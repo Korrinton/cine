@@ -97,7 +97,7 @@ asientos y creada la reserva, crea los registros y los vincula a la id de usuari
                     <input type="hidden" name="asientos_json" id="asientos_json">
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                        <a href="{{ url('/dashboard') }}" class="btn btn-outline-secondary px-4">Cancelar</a>
+                        <a href="{{ url('/') }}" class="btn btn-outline-secondary px-4">Cancelar</a>
                         <button type="submit" id="btn-confirmar" class="btn btn-primary px-5" disabled>
                             Confirmar Reserva
                         </button>

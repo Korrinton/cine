@@ -72,7 +72,7 @@ class UsuariosController extends Controller
         // Intentamos el login usando las credenciales personalizadas
         if (Auth::attempt($credenciales, $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard'); 
+            return redirect()->intended('/');
         }
 
         return back()->withErrors(['error' => 'El correo o la contraseña no coinciden.']);

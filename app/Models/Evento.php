@@ -10,19 +10,16 @@ class Evento extends Model
 {
     protected $table = 'eventos';
     
-    protected $primaryKey = 'id_evento'; 
+    protected $primaryKey = 'id_eventos';
 
     //fillable para asignación masiva
     protected $fillable = [
+        'nombre',
         'id_pelicula',
         'id_sala',
-        'horarios',
-        'asientos_disponibles'
-    ];
-    //casts para convertir los campos a tipos específicos
-    protected $casts = [
-        'asientos_disponibles' => 'array',
-        'horarios' => 'datetime'
+        'precio',
+        'fecha_estreno',
+        'fecha_final',
     ];
     //relaciones
 
@@ -39,6 +36,6 @@ class Evento extends Model
     // Un evento tiene muchas reservas
     public function reservas(): HasMany
     {
-        return $this->hasMany(Reserva::class, 'id_evento', 'id_evento');
+        return $this->hasMany(Reserva::class, 'id_evento', 'id_eventos');
     }
 }
