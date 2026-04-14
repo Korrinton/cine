@@ -29,6 +29,14 @@
                                     <i class="bi bi-person-circle me-2"></i>{{ Str::limit(Auth::user()->nombre, 10, '...') }}
                                 </a>
                             </li>
+                            @if(Auth::user()->isAdmin())
+                            <li>
+                                <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                    <i class="bi bi-shield-lock me-2"></i>Panel Admin
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            @endif
                             <li>
                                 <a class="dropdown-item" href="{{ route('perfil.editar') }}">
                                     <i class="bi bi-person-gear me-2"></i>Modificar Perfil

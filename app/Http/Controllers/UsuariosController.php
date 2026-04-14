@@ -28,14 +28,15 @@ class UsuariosController extends Controller
     {
         $request->validate([
             'correo'   => 'required|email|unique:usuarios,correo',
-            'password' => ['required', Password::min(8)->max(8)->letters()->numbers()->symbols()->mixedCase()],
+            'password' => ['required', 'min:8', 'max:20'],
             'nombre'   => 'required|string',
         ], [
             'correo.unique' => 'Este correo ya está registrado.',
             'correo.required' => 'La dirección de correo es imprescindible para crear la cuenta.',
             'correo.email'    => 'El formato de correo no es válido.',
-            'password' => 'La contraseña debe tener exactamente 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.',
             'password.required' => 'Indica tu contraseña.',
+            'password.min'      => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.max'      => 'La contraseña no puede tener más de 20 caracteres.',
             'nombre.required' => 'Indica tu nombre.'
         ]);
 
