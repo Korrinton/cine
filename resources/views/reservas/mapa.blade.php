@@ -51,11 +51,11 @@ asientos y creada la reserva, crea los registros y los vincula a la id de usuari
 </style>
 
 <div class="row justify-content-center mt-5">
-    <div class="col-md-8">
+    <div class="col-12 d-flex justify-content-center">
         <div class="card shadow border-0">
             {{-- Encabezado idéntico al Login (Negro con texto blanco) --}}
             <div class="card-header bg-dark text-white text-center py-3 d-flex justify-content-between align-items-center px-4">
-                <h4 class="mb-0">Reserva: {{ $evento->nombre }}</h4>
+                <h4 class="mb-0">Reserva: {{ $evento->pelicula_titulo }} - {{ $evento->sala_nombre }}</h4>
             </div>
 
             <div class="card-body p-4 text-center">
@@ -91,7 +91,7 @@ asientos y creada la reserva, crea los registros y los vincula a la id de usuari
                     <p class="small text-muted" id="lista-asientos">Ninguno seleccionado</p>
                 </div>
 
-                <form action="{{ route('reservas.store') }}" method="POST" id="form-reserva" class="mt-4">
+                <form action="{{ route('reservas.confirmacion') }}" method="POST" id="form-reserva" class="mt-4">
                     @csrf
                     <input type="hidden" name="id_evento" value="{{ $evento->id_eventos }}">
                     <input type="hidden" name="asientos_json" id="asientos_json">
