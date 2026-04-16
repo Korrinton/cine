@@ -1,12 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\PeliculaController;
 use App\Http\Controllers\ReservaController;
-use App\Http\Controllers\PeliculaController;
-use App\Http\Controllers\EventoController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\AdminController;
 
@@ -26,18 +24,18 @@ Route::get('/', function () {
 });
 
 //rutas para usuarios no autenticados
-Route::controller(UserController::class)->middleware('guest')->group(function () {
-    Route::get('/registro', 'create')->name('register');
-    Route::post('/registro', 'store')->name('register.store');
-    Route::get('/login', 'login')->name('login');
-    Route::post('/login', 'authenticate')->name('login.post');
+Route::controller(UsuariosController::class)->middleware('guest')->group(function () {
+    Route::get('/registro', 'mostrarRegistro')->name('register');
+    Route::post('/registro', 'almacenar')->name('register.store');
+    Route::get('/login', 'mostrarLogin')->name('login');
+    Route::post('/login', 'acceder')->name('login.post');
 });
 
 //rutas para usuarios autenticados
-Route::controller(UserController::class)->middleware('auth')->group(function () {
-    Route::post('/logout', 'logout')->name('logout');
-    Route::get('/perfil', 'edit')->name('profile.edit');
-    Route::put('/perfil', 'update')->name('profile.update');
+Route::controller(UsuariosController::class)->middleware('auth')->group(function () {
+    Route::post('/logout', 'salir')->name('logout');
+    Route::get('/perfil', 'editar')->name('profile.edit');
+    Route::put('/perfil', 'actualizar')->name('profile.update');
 });
 
 Route::get('/reservar/{id_evento}', [ReservaController::class, 'index'])->name('reservas.mapa')->middleware('auth');
