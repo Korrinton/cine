@@ -39,6 +39,7 @@ Route::controller(UsuariosController::class)->middleware('auth')->group(function
 });
 
 Route::get('/reservar/{id_evento}', [ReservaController::class, 'index'])->name('reservas.mapa')->middleware('auth');
+Route::post('/reservar/confirmacion', [ReservaController::class, 'confirmacion'])->name('reservas.confirmacion')->middleware('auth');
 Route::post('/reservar', [ReservaController::class, 'store'])->name('reservas.store')->middleware('auth');
 
 // Películas
