@@ -32,6 +32,7 @@
                         <th class="text-center">Precio</th>
                         <th class="text-center">Inicio</th>
                         <th class="text-center">Fin</th>
+                        <th class="text-center">Sesiones</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -54,6 +55,15 @@
                             <td class="text-center">{{ number_format($evento->precio, 2) }} €</td>
                             <td class="text-center">{{ \Carbon\Carbon::parse($evento->fecha_estreno)->format('d/m/Y') }}</td>
                             <td class="text-center">{{ \Carbon\Carbon::parse($evento->fecha_final)->format('d/m/Y') }}</td>
+                            <td class="text-center">
+                                @forelse($evento->sesiones as $sesion)
+                                    <span class="badge bg-secondary me-1">
+                                        {{ \Carbon\Carbon::parse($sesion->hora_inicio)->format('H:i') }}
+                                    </span>
+                                @empty
+                                    <span class="text-muted small">—</span>
+                                @endforelse
+                            </td>
                             <td class="text-end">
                                 <form action="{{ route('admin.eventos.eliminar', $evento->id_eventos) }}" method="POST"
                                       onsubmit="return confirm('¿Eliminar este evento?')">

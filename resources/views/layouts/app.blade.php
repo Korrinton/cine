@@ -43,8 +43,8 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" >
-                                    <i class="bi bi-film me-2"></i>Historial de Compras
+                                <a class="dropdown-item" href="{{ route('historial') }}">
+                                    <i class="bi bi-ticket-perforated me-2"></i>Historial de Compras
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>

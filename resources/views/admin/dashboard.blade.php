@@ -65,7 +65,7 @@
             </a>
         </div>
         <div class="col-md-4">
-            <a href="{{ route('peliculas.index') }}" class="card border-0 shadow-sm text-decoration-none text-dark h-100">
+            <a href="{{ route('admin.peliculas') }}" class="card border-0 shadow-sm text-decoration-none text-dark h-100">
                 <div class="card-body d-flex align-items-center gap-3 py-4">
                     <i class="bi bi-film fs-2 text-warning"></i>
                     <div>

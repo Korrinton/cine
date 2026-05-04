@@ -38,4 +38,9 @@ class Evento extends Model
     {
         return $this->hasMany(Reserva::class, 'id_evento', 'id_eventos');
     }
+
+    public function sesiones(): HasMany
+    {
+        return $this->hasMany(\App\Models\Sesion::class, 'id_evento', 'id_eventos')->orderBy('hora_inicio');
+    }
 }

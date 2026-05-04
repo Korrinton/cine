@@ -124,22 +124,174 @@
             </div>
         </div>
 
+        {{-- HORARIOS --}}
+        <div class="card mb-4">
+            <div class="card-header fw-semibold">
+                <i class="bi bi-clock me-1"></i>Horarios de sesión
+                <small class="text-muted fw-normal ms-2">(cine abierto 12:00 – 00:00)</small>
+            </div>
+            <div class="card-body">
+
+                <div id="aviso_sin_pelicula" class="alert alert-info py-2 small mb-3">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Selecciona o introduce la duración de la película para ver los horarios disponibles.
+                </div>
+
+                <div id="bloque_horario" style="display:none;">
+                    <p class="form-label fw-semibold mb-2">
+                        Selecciona uno o varios horarios <span class="text-danger">*</span>
+                    </p>
+                    <div id="contenedor_horarios" class="d-flex flex-wrap gap-2"></div>
+                    <div class="form-text mt-2">Cada horario marcado crea una sesión diaria.</div>
+                </div>
+
+            </div>
+        </div>
+
         <button type="submit" class="btn btn-primary w-100">Crear Evento</button>
     </form>
 </div>
 
 <script>
+    // Datos de duración de cada película
+    const duraciones = {
+        @foreach($peliculas as $p)
+            {{ $p->id_pelicula }}: {{ $p->duracion }},
+        @endforeach
+    };
+
+    const INICIO_CINE = 12 * 60; // 12:00 en minutos
+    const FIN_CINE    = 24 * 60; // 00:00 (medianoche) en minutos
+    const INTERVALO   = 30;      // cada 30 minutos
+
+    function minAHora(min) {
+        const h = String(Math.floor(min / 60)).padStart(2, '0');
+        const m = String(min % 60).padStart(2, '0');
+        return h + ':' + m;
+    }
+
+    function generarSlots(duracionMin) {
+        const contenedor = document.getElementById('contenedor_horarios');
+        const aviso      = document.getElementById('aviso_sin_pelicula');
+        const bloque     = document.getElementById('bloque_horario');
+
+        contenedor.innerHTML = '';
+
+        if (!duracionMin || duracionMin <= 0) {
+            aviso.innerHTML     = '<i class="bi bi-info-circle me-1"></i>Selecciona o introduce la duración de la película para ver los horarios disponibles.';
+            aviso.style.display = '';
+            bloque.style.display = 'none';
+            return;
+        }
+
+        const ultimoInicio = FIN_CINE - duracionMin;
+
+        if (ultimoInicio < INICIO_CINE) {
+            aviso.innerHTML     = '<i class="bi bi-exclamation-triangle me-1"></i>La película es demasiado larga para el horario del cine (12:00–20:00).';
+            aviso.style.display = '';
+            bloque.style.display = 'none';
+            return;
+        }
+
+        aviso.style.display  = 'none';
+        bloque.style.display = '';
+
+        const oldHorarios = @json(old('horarios', []));
+
+        for (let t = INICIO_CINE; t <= ultimoInicio; t += INTERVALO) {
+            const val  = minAHora(t);
+            const fin  = minAHora(t + duracionMin);
+            const id   = 'hora_' + t;
+            const checked = oldHorarios.includes(val) ? 'checked' : '';
+
+            const esMatinal   = t < 13 * 60;
+            const esNocturno  = t >= 22 * 60;
+            let bgStyle = '';
+            let textStyle = '';
+            if (esMatinal) {
+                bgStyle   = 'background-color:#cfe2ff;border-color:#9ec5fe;';
+            } else if (esNocturno) {
+                bgStyle   = 'background-color:#1e3a5f;border-color:#0d253f;';
+                textStyle = 'color:#fff;';
+            }
+
+            contenedor.insertAdjacentHTML('beforeend', `
+                <div class="form-check form-check-inline border rounded px-3 py-2" id="wrap_${t}"
+                     style="${bgStyle}">
+                    <input class="form-check-input" type="checkbox"
+                           name="horarios[]" id="${id}" value="${val}"
+                           data-min="${t}" data-duracion="${duracionMin}"
+                           ${checked}
+                           onchange="actualizarConflictos()">
+                    <label class="form-check-label fw-semibold" for="${id}" style="${textStyle}">
+                        ${val}<small class="fw-normal" style="${textStyle}opacity:.8"> – ${fin}</small>
+                    </label>
+                </div>
+            `);
+        }
+
+        // Restaurar conflictos si había old() marcados
+        if (oldHorarios.length) actualizarConflictos();
+    }
+
+    function actualizarConflictos() {
+        const checkboxes = document.querySelectorAll('#contenedor_horarios input[type=checkbox]');
+        const seleccionados = [...checkboxes].filter(c => c.checked).map(c => parseInt(c.dataset.min));
+
+        checkboxes.forEach(cb => {
+            const t        = parseInt(cb.dataset.min);
+            const dur      = parseInt(cb.dataset.duracion);
+            const solapado = seleccionados.some(s => s !== t && Math.abs(s - t) < dur);
+
+            const wrap = document.getElementById('wrap_' + t);
+            if (solapado && !cb.checked) {
+                cb.disabled = true;
+                wrap.classList.add('opacity-50');
+                wrap.title = 'Se solapa con un horario ya seleccionado';
+            } else {
+                cb.disabled = false;
+                wrap.classList.remove('opacity-50');
+                wrap.title = '';
+            }
+        });
+    }
+
+    function getDuracionActual() {
+        const modo = document.querySelector('input[name="modo_pelicula"]:checked').value;
+        if (modo === 'existente') {
+            const id = document.getElementById('id_pelicula').value;
+            return id ? (duraciones[id] || 0) : 0;
+        } else {
+            return parseInt(document.getElementById('duracion').value) || 0;
+        }
+    }
+
+    //Cambio de película existente
+    document.getElementById('id_pelicula').addEventListener('change', function () {
+        generarSlots(duraciones[this.value] || 0);
+    });
+
+    //Cambio de duración en nueva película
+    document.getElementById('duracion').addEventListener('input', function () {
+        generarSlots(parseInt(this.value) || 0);
+    });
+
+    //Cambio de modo pelicula
     const radios = document.querySelectorAll('input[name="modo_pelicula"]');
     const bloqueExistente = document.getElementById('bloque_existente');
-    const bloqueNueva = document.getElementById('bloque_nueva');
+    const bloqueNueva     = document.getElementById('bloque_nueva');
 
     function actualizarBloques() {
         const modo = document.querySelector('input[name="modo_pelicula"]:checked').value;
         bloqueExistente.style.display = modo === 'existente' ? '' : 'none';
         bloqueNueva.style.display     = modo === 'nueva'     ? '' : 'none';
+        generarSlots(getDuracionActual());
     }
 
     radios.forEach(r => r.addEventListener('change', actualizarBloques));
     actualizarBloques();
+
+    // Restaurar horario si hay old() tras error de validación
+    window.addEventListener('DOMContentLoaded', () => generarSlots(getDuracionActual()));
 </script>
 @endsection

@@ -13,6 +13,7 @@ class Reserva extends Model
         'id_usuario',
         'fila',
         'asiento',
-        'fecha_reserva'
+        'fecha_reserva',
+        'fecha_sesion',
     ];
 }

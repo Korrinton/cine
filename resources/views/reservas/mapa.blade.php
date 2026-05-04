@@ -55,7 +55,21 @@ asientos y creada la reserva, crea los registros y los vincula a la id de usuari
         <div class="card shadow border-0">
             {{-- Encabezado idéntico al Login (Negro con texto blanco) --}}
             <div class="card-header bg-dark text-white text-center py-3 d-flex justify-content-between align-items-center px-4">
-                <h4 class="mb-0">Reserva: {{ $evento->pelicula_titulo }} - {{ $evento->sala_nombre }}</h4>
+                <div class="text-start">
+                    <h4 class="mb-0">{{ $evento->pelicula_titulo }}</h4>
+                    <small class="text-white-50">
+                        <i class="bi bi-door-open me-1"></i>{{ $evento->sala_nombre }}
+                        @if($fecha)
+                            &nbsp;·&nbsp;
+                            <i class="bi bi-calendar-event me-1"></i>
+                            {{ \Carbon\Carbon::parse($fecha)->isoFormat('dddd D [de] MMMM [de] YYYY') }}
+                        @endif
+                        @if($hora)
+                            &nbsp;·&nbsp;
+                            <i class="bi bi-clock me-1"></i>{{ $hora }}
+                        @endif
+                    </small>
+                </div>
             </div>
 
             <div class="card-body p-4 text-center">
@@ -94,6 +108,8 @@ asientos y creada la reserva, crea los registros y los vincula a la id de usuari
                 <form action="{{ route('reservas.confirmacion') }}" method="POST" id="form-reserva" class="mt-4">
                     @csrf
                     <input type="hidden" name="id_evento" value="{{ $evento->id_eventos }}">
+                    <input type="hidden" name="fecha_sesion" value="{{ $fecha }}">
+                    <input type="hidden" name="hora_sesion"  value="{{ $hora }}">
                     <input type="hidden" name="asientos_json" id="asientos_json">
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-center">

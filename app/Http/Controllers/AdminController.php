@@ -6,7 +6,9 @@ use App\Models\Evento;
 use App\Models\Sala;
 use App\Models\Pelicula;
 use App\Models\Reserva;
+use App\Models\Sesion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -63,7 +65,7 @@ class AdminController extends Controller
 
     public function eventos()
     {
-        $eventos = Evento::with(['pelicula', 'sala'])->orderBy('fecha_estreno')->get();
+        $eventos = Evento::with(['pelicula', 'sala', 'sesiones'])->orderBy('fecha_estreno')->get();
         return view('admin.eventos', compact('eventos'));
     }
 
@@ -88,6 +90,8 @@ class AdminController extends Controller
             'precio'        => 'required|numeric|min:0',
             'fecha_estreno' => 'required|date',
             'fecha_final'   => 'required|date|after_or_equal:fecha_estreno',
+            'horarios'      => 'required|array|min:1',
+            'horarios.*'    => 'required|date_format:H:i',
         ]);
 
         $solapado = Evento::where('id_sala', $request->id_sala)
@@ -118,7 +122,7 @@ class AdminController extends Controller
             $idPelicula = $request->id_pelicula;
         }
 
-        Evento::create([
+        $evento = Evento::create([
             'nombre'        => Pelicula::find($idPelicula)->titulo,
             'id_pelicula'   => $idPelicula,
             'id_sala'       => $request->id_sala,
@@ -127,6 +131,10 @@ class AdminController extends Controller
             'fecha_final'   => $request->fecha_final,
         ]);
 
+        foreach ($request->horarios as $hora) {
+            Sesion::create(['id_evento' => $evento->id_eventos, 'hora_inicio' => $hora]);
+        }
+
         return redirect()->route('admin.eventos')->with('success', 'Evento creado correctamente.');
     }
 
@@ -134,5 +142,49 @@ class AdminController extends Controller
     {
         Evento::findOrFail($id)->delete();
         return redirect()->route('admin.eventos')->with('success', 'Evento eliminado.');
+    }
+
+    // ── PELÍCULAS ─────────────────────────────────────────────────────────────
+
+    public function peliculas()
+    {
+        $peliculas = Pelicula::orderBy('titulo')->get();
+        return view('peliculas.index', compact('peliculas'));
+    }
+
+    public function peliculaGuardar(Request $request)
+    {
+        $request->validate([
+            'titulo'      => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'duracion'    => 'required|integer|min:1',
+            'genero'      => 'nullable|string|max:100',
+            'imagen'      => 'nullable|image|max:2048',
+        ]);
+
+        $rutaImagen = null;
+        if ($request->hasFile('imagen')) {
+            $rutaImagen = $request->file('imagen')->store('peliculas', 'public');
+        }
+
+        Pelicula::create([
+            'titulo'      => $request->titulo,
+            'descripcion' => $request->descripcion,
+            'duracion'    => $request->duracion,
+            'genero'      => $request->genero,
+            'imagen'      => $rutaImagen,
+        ]);
+
+        return redirect()->route('admin.peliculas')->with('success', 'Película creada correctamente.');
+    }
+
+    public function peliculaEliminar($id)
+    {
+        $pelicula = Pelicula::findOrFail($id);
+        if ($pelicula->imagen) {
+            Storage::disk('public')->delete($pelicula->imagen);
+        }
+        $pelicula->delete();
+        return redirect()->route('admin.peliculas')->with('success', 'Película eliminada correctamente.');
     }
 }

@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
-// Importamos correctamente el modelo que existe en tu carpeta Models
-use App\Models\Usuario; 
-use Illuminate\Support\Facades\Hash; 
+use App\Models\Usuario;
+use App\Models\Reserva;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UsuariosController extends Controller
 {
@@ -104,6 +105,37 @@ class UsuariosController extends Controller
         $usuario->save();
 
         return back()->with('success', '¡Perfil actualizado correctamente!');
+    }
+
+    public function historial()
+    {
+        $reservas = DB::table('reservas')
+            ->join('eventos', 'reservas.id_evento', '=', 'eventos.id_eventos')
+            ->join('salas', 'eventos.id_sala', '=', 'salas.id_sala')
+            ->join('peliculas', 'eventos.id_pelicula', '=', 'peliculas.id_pelicula')
+            ->where('reservas.id_usuario', Auth::id())
+            ->select(
+                'reservas.id_reserva',
+                'reservas.fila',
+                'reservas.asiento',
+                'reservas.fecha_reserva',
+                'reservas.fecha_sesion',
+                'eventos.id_eventos',
+                'eventos.nombre as evento_nombre',
+                'eventos.precio',
+                'eventos.fecha_estreno',
+                'eventos.hora_inicio',
+                'salas.nombre as sala_nombre',
+                'peliculas.titulo as pelicula_titulo',
+                'peliculas.imagen as pelicula_imagen',
+                'peliculas.genero',
+                'peliculas.duracion'
+            )
+            ->orderByDesc('reservas.fecha_reserva')
+            ->get()
+            ->groupBy(fn($r) => $r->id_eventos . '_' . $r->fecha_sesion);
+
+        return view('usuarios.historial', compact('reservas'));
     }
 
     public function salir(Request $request)
