@@ -23,11 +23,30 @@
                 $horaSesion = $primero->hora_sesion
                     ? \Carbon\Carbon::parse($primero->hora_sesion)->format('H:i')
                     : '';
-                $nocturno   = $horaSesion && $horaSesion >= '22:00';
-                $matinal    = $horaSesion && $horaSesion < '13:00';
-                $descuento  = $nocturno || $matinal;
-                $precioUnit = $descuento ? $primero->precio * 0.5 : $primero->precio;
-                $badgeLabel = $nocturno ? '−50% Nocturno' : '−50% Matinal';
+                $nocturno    = $horaSesion && $horaSesion >= '22:00';
+                $matinal     = $horaSesion && $horaSesion < '13:00';
+                $diaSemana   = $primero->fecha_sesion ? \Carbon\Carbon::parse($primero->fecha_sesion)->dayOfWeek : null;
+                $esMiercoles = $diaSemana === 3;
+                $esFinSemana = in_array($diaSemana, [5, 6]);
+
+                if ($esMiercoles) {
+                    $precioUnit = $primero->precio * 0.5;
+                    $badgeLabel = 'Día del espectador −50%';
+                    $badgeClass = 'bg-success';
+                } elseif ($nocturno || $matinal) {
+                    $precioUnit = max(0, $primero->precio - 3);
+                    $badgeLabel = $nocturno ? '−3€ Nocturno' : '−3€ Matinal';
+                    $badgeClass = 'bg-warning text-dark';
+                } elseif ($esFinSemana) {
+                    $precioUnit = $primero->precio + 4;
+                    $badgeLabel = 'Viernes/Sábado +4€';
+                    $badgeClass = 'bg-danger';
+                } else {
+                    $precioUnit = $primero->precio;
+                    $badgeLabel = null;
+                    $badgeClass = null;
+                }
+                $descuento = $badgeLabel !== null;
                 $qrData = implode("\n", [
                     'CINE - ENTRADA',
                     'Película: ' . $primero->pelicula_titulo,
@@ -102,7 +121,7 @@
                                             <td class="text-end">
                                                 {{ number_format($precioUnit, 2) }} €
                                                 @if($descuento)
-                                                    <span class="badge bg-warning text-dark ms-1">{{ $badgeLabel }}</span>
+                                                    <span class="badge {{ $badgeClass }} ms-1">{{ $badgeLabel }}</span>
                                                 @endif
                                             </td>
                                         </tr>

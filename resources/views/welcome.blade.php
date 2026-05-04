@@ -98,24 +98,28 @@
                                         <strong>{{ number_format($evento->precio, 2) }} €</strong>
                                         @if($tieneDescuento)
                                             <span class="badge bg-warning text-dark ms-1">
-                                                <i class="bi bi-tag me-1"></i>Desde {{ number_format($evento->precio * 0.5, 2) }} €
+                                                <i class="bi bi-tag me-1"></i>Desde {{ number_format(max(0, $evento->precio - 3), 2) }} €
                                             </span>
                                         @endif
                                     </li>
-                                    @if($tieneMatinal || $tieneNocturna)
-                                        <li class="mt-1">
-                                            @if($tieneMatinal)
-                                                <span class="badge bg-info text-dark me-1">
-                                                    <i class="bi bi-sunrise me-1"></i>Matinal −50%
-                                                </span>
-                                            @endif
-                                            @if($tieneNocturna)
-                                                <span class="badge bg-secondary me-1">
-                                                    <i class="bi bi-moon-stars me-1"></i>Nocturno −50%
-                                                </span>
-                                            @endif
-                                        </li>
-                                    @endif
+                                    <li class="mt-1 d-flex flex-wrap gap-1">
+                                        @if($tieneMatinal)
+                                            <span class="badge bg-info text-dark">
+                                                <i class="bi bi-sunrise me-1"></i>Matinal −3€
+                                            </span>
+                                        @endif
+                                        @if($tieneNocturna)
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-moon-stars me-1"></i>Nocturno −3€
+                                            </span>
+                                        @endif
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-star me-1"></i>Miércoles −50%
+                                        </span>
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-fire me-1"></i>Vie/Sáb +4€
+                                        </span>
+                                    </li>
                                 @endif
                             </ul>
 
