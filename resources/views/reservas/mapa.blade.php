@@ -29,10 +29,10 @@ asientos y creada la reserva, crea los registros y los vincula a la id de usuari
         display: grid; gap: 8px; margin: 20px auto; justify-content: center; 
     }
 
-    .silla { 
-        width: 35px; height: 35px; border: 1px solid #ccc; cursor: pointer; 
-        display: flex; align-items: center; justify-content: center; border-radius: 5px; 
-        font-size: 0.8rem; transition: 0.2s;
+    .silla {
+        width: 35px; height: 35px; border: 1px solid #ccc; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; border-radius: 5px;
+        font-size: 0.8rem; transition: 0.2s; user-select: none;
     }
     
     .silla.ocupada {
@@ -91,10 +91,10 @@ asientos y creada la reserva, crea los registros y los vincula a la id de usuari
                                 $id = "$f-$s"; 
                                 $estaOcupada = in_array($id, $ocupados); 
                             @endphp
-                            <div class="silla {{ $estaOcupada ? 'ocupada' : '' }}" 
+                            <div class="silla {{ $estaOcupada ? 'ocupada' : '' }}"
                                  @if(!$estaOcupada) onclick="gestionarAsiento(this, {{ $f }}, {{ $s }})" @endif
-                                 id="silla-{{ $id }}">
-                                {{ $s }}
+                                 id="silla-{{ $id }}"
+                                 title="Fila {{ $f }}, Asiento {{ $s }}">
                             </div>
                         @endfor
                     @endfor

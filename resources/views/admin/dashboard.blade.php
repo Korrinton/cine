@@ -75,6 +75,17 @@
                 </div>
             </a>
         </div>
+        <div class="col-md-4">
+            <a href="{{ route('admin.recaudacion') }}" class="card border-0 shadow-sm text-decoration-none text-dark h-100">
+                <div class="card-body d-flex align-items-center gap-3 py-4">
+                    <i class="bi bi-cash-coin fs-2 text-success"></i>
+                    <div>
+                        <div class="fw-semibold">Recaudación</div>
+                        <div class="text-muted small">Ingresos por película</div>
+                    </div>
+                </div>
+            </a>
+        </div>
     </div>
 
 </div>

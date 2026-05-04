@@ -57,4 +57,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/peliculas',           [AdminController::class, 'peliculas'])->name('peliculas');
     Route::post('/peliculas',          [AdminController::class, 'peliculaGuardar'])->name('peliculas.guardar');
     Route::delete('/peliculas/{id}',   [AdminController::class, 'peliculaEliminar'])->name('peliculas.eliminar');
+
+    // Recaudación y gastos
+    Route::get('/recaudacion',         [AdminController::class, 'recaudacion'])->name('recaudacion');
+    Route::post('/gastos',                [AdminController::class, 'gastoGuardar'])->name('gastos.guardar');
+    Route::delete('/gastos/{id}',         [AdminController::class, 'gastoEliminar'])->name('gastos.eliminar');
+    Route::post('/ingresos-extra',        [AdminController::class, 'ingresoGuardar'])->name('ingresos.guardar');
+    Route::delete('/ingresos-extra/{id}', [AdminController::class, 'ingresoEliminar'])->name('ingresos.eliminar');
 });

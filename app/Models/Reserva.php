@@ -15,5 +15,6 @@ class Reserva extends Model
         'asiento',
         'fecha_reserva',
         'fecha_sesion',
+        'hora_sesion',
     ];
 }
