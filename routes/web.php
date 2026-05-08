@@ -5,6 +5,7 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\RecaudacionController;
 
 // Inicio
 Route::get('/', function () {
@@ -59,9 +60,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/peliculas/{id}',   [AdminController::class, 'peliculaEliminar'])->name('peliculas.eliminar');
 
     // Recaudación y gastos
-    Route::get('/recaudacion',         [AdminController::class, 'recaudacion'])->name('recaudacion');
-    Route::post('/gastos',                [AdminController::class, 'gastoGuardar'])->name('gastos.guardar');
-    Route::delete('/gastos/{id}',         [AdminController::class, 'gastoEliminar'])->name('gastos.eliminar');
-    Route::post('/ingresos-extra',        [AdminController::class, 'ingresoGuardar'])->name('ingresos.guardar');
-    Route::delete('/ingresos-extra/{id}', [AdminController::class, 'ingresoEliminar'])->name('ingresos.eliminar');
+    Route::get('/recaudacion',            [RecaudacionController::class, 'index'])->name('recaudacion');
+    Route::post('/gastos',                [RecaudacionController::class, 'gastoGuardar'])->name('gastos.guardar');
+    Route::delete('/gastos/{id}',         [RecaudacionController::class, 'gastoEliminar'])->name('gastos.eliminar');
+    Route::post('/ingresos-extra',        [RecaudacionController::class, 'ingresoGuardar'])->name('ingresos.guardar');
+    Route::delete('/ingresos-extra/{id}', [RecaudacionController::class, 'ingresoEliminar'])->name('ingresos.eliminar');
 });

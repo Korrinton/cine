@@ -124,7 +124,7 @@ class UsuariosController extends Controller
                 'eventos.nombre as evento_nombre',
                 'eventos.precio',
                 'eventos.fecha_estreno',
-                'eventos.hora_inicio',
+                'reservas.hora_sesion',
                 'salas.nombre as sala_nombre',
                 'peliculas.titulo as pelicula_titulo',
                 'peliculas.imagen as pelicula_imagen',

@@ -10,12 +10,14 @@ return new class extends Migration
     {
         Schema::table('gastos', function (Blueprint $table) {
             $table->unsignedBigInteger('id_pelicula')->nullable()->after('tipo');
+            $table->foreign('id_pelicula')->references('id_pelicula')->on('peliculas')->onDelete('set null');
         });
     }
 
     public function down(): void
     {
         Schema::table('gastos', function (Blueprint $table) {
+            $table->dropForeign(['id_pelicula']);
             $table->dropColumn('id_pelicula');
         });
     }
