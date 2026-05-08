@@ -9,12 +9,12 @@ return new class extends Migration
     public function up(): void {
         // 1. USUARIOS
         Schema::create('usuarios', function (Blueprint $table) {
-            $table->id('id_usuario'); 
+            $table->id('id_usuario');
             $table->string('nombre');
             $table->string('apellidos')->nullable();
             $table->string('correo')->unique();
             $table->string('password');
-            $table->string('tipo')->default('cliente'); 
+            $table->string('tipo')->default('cliente');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -31,34 +31,33 @@ return new class extends Migration
 
         // 3. EVENTOS
         Schema::create('eventos', function (Blueprint $table) {
-            $table->id('id_eventos'); 
-            $table->string('nombre'); 
-            $table->unsignedBigInteger('id_sala'); 
-            $table->integer('precio'); 
-            $table->date('fecha_estreno'); 
-            $table->date('fecha_final'); 
+            $table->id('id_eventos');
+            $table->string('nombre');
+            $table->unsignedBigInteger('id_sala');
+            $table->integer('precio');
+            $table->date('fecha_estreno');
+            $table->date('fecha_final');
             $table->timestamps();
-            
+
             $table->foreign('id_sala')->references('id_sala')->on('salas')->onDelete('cascade');
         });
 
         // 4. RESERVAS
         Schema::create('reservas', function (Blueprint $table) {
-            $table->id('id_reserva'); 
-            $table->unsignedBigInteger('id_evento'); 
-            $table->unsignedBigInteger('id_usuario'); 
-            $table->integer('fila'); 
-            $table->integer('asiento'); 
-            $table->timestamp('fecha_reserva'); 
+            $table->id('id_reserva');
+            $table->unsignedBigInteger('id_evento');
+            $table->unsignedBigInteger('id_usuario');
+            $table->integer('fila');
+            $table->integer('asiento');
+            $table->timestamp('fecha_reserva');
+            $table->date('fecha_sesion')->nullable();
+            $table->time('hora_sesion')->nullable();
             $table->timestamps();
 
-            // Relaciones
             $table->foreign('id_evento')->references('id_eventos')->on('eventos')->onDelete('cascade');
             $table->foreign('id_usuario')->references('id_usuario')->on('usuarios')->onDelete('cascade');
 
-            //Se ha eliminado el unique de ids de evento y usuario para poder reservar más de uno
-            //Nadie más puede reservar el mismo asiento en el mismo evento.
-            $table->unique(['id_evento', 'fila', 'asiento'], 'asiento_ocupado_unique');
+            $table->unique(['id_evento', 'fila', 'asiento', 'fecha_sesion', 'hora_sesion'], 'asiento_sesion_unique');
         });
 
         // 5. CACHE
