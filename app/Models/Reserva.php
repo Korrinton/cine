@@ -16,5 +16,8 @@ class Reserva extends Model
         'fecha_reserva',
         'fecha_sesion',
         'hora_sesion',
+        'token',
+        'validado',
+        'fecha_validacion',
     ];
 }

@@ -120,6 +120,9 @@ class UsuariosController extends Controller
                 'reservas.asiento',
                 'reservas.fecha_reserva',
                 'reservas.fecha_sesion',
+                'reservas.token',
+                'reservas.validado',
+                'reservas.fecha_validacion',
                 'eventos.id_eventos',
                 'eventos.nombre as evento_nombre',
                 'eventos.precio',
@@ -133,7 +136,7 @@ class UsuariosController extends Controller
             )
             ->orderByDesc('reservas.fecha_reserva')
             ->get()
-            ->groupBy(fn($r) => $r->id_eventos . '_' . $r->fecha_sesion);
+            ->groupBy(fn($r) => $r->token ?? ($r->id_eventos . '_' . $r->fecha_sesion));
 
         return view('usuarios.historial', compact('reservas'));
     }

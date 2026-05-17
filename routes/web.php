@@ -5,6 +5,8 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PagoController;
+use App\Http\Controllers\ValidarController;
 use App\Http\Controllers\RecaudacionController;
 
 // Inicio
@@ -36,6 +38,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/reservar/{id_evento}',      [ReservaController::class, 'index'])->name('reservas.mapa');
     Route::post('/reservar/confirmacion',    [ReservaController::class, 'confirmacion'])->name('reservas.confirmacion');
     Route::post('/reservar',                 [ReservaController::class, 'store'])->name('reservas.store');
+});
+
+// Validación de entradas (solo admin)
+Route::get('/validar/{token}', [ValidarController::class, 'show'])
+    ->middleware(['auth', 'admin'])
+    ->name('validar.entrada');
+
+// Pagos
+Route::middleware('auth')->group(function () {
+    Route::post('/pagar/checkout', [PagoController::class, 'checkout'])->name('pago.checkout');
+    Route::get('/pagar/exito',     [PagoController::class, 'exito'])->name('pago.exito');
+    Route::get('/pagar/cancelar',  [PagoController::class, 'cancelar'])->name('pago.cancelar');
 });
 
 // Admin

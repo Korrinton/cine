@@ -47,14 +47,17 @@
                     $badgeClass = null;
                 }
                 $descuento = $badgeLabel !== null;
-                $qrData = implode("\n", [
-                    'CINE - ENTRADA',
-                    'Película: ' . $primero->pelicula_titulo,
-                    'Sala: '     . $primero->sala_nombre,
-                    'Fecha: '    . $fechaSesion . ($horaSesion ? ' ' . $horaSesion : ''),
-                    'Asientos: ' . $asientosTxt,
-                    'Ref: #'     . $ids,
-                ]);
+                $qrData   = $primero->token
+                    ? url('/validar/' . $primero->token)
+                    : implode("\n", [
+                        'CINE - ENTRADA',
+                        'Película: ' . $primero->pelicula_titulo,
+                        'Sala: '     . $primero->sala_nombre,
+                        'Fecha: '    . $fechaSesion . ($horaSesion ? ' ' . $horaSesion : ''),
+                        'Asientos: ' . $asientosTxt,
+                        'Ref: #'     . $ids,
+                    ]);
+                $yaValidado = (bool) $primero->validado;
             @endphp
 
             <div class="card shadow-sm mb-4">
@@ -138,13 +141,24 @@
 
                         {{-- Código QR --}}
                         <div class="col-md-5 text-center">
-                            <div class="border rounded p-3 d-inline-block bg-white">
+                            <div class="border rounded p-3 d-inline-block bg-white {{ $yaValidado ? 'opacity-50' : '' }}">
                                 {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(160)->errorCorrection('M')->generate($qrData) !!}
                             </div>
-                            <p class="text-muted small mt-2 mb-0">
-                                <i class="bi bi-qr-code me-1"></i>Muestra este código en la entrada
-                            </p>
-                            <p class="text-muted" style="font-size: 0.7rem;">Ref: #{{ $ids }}</p>
+                            @if($yaValidado)
+                                <p class="text-danger fw-semibold small mt-2 mb-0">
+                                    <i class="bi bi-x-circle me-1"></i>Entrada ya utilizada
+                                </p>
+                                @if($primero->fecha_validacion)
+                                    <p class="text-muted" style="font-size: 0.7rem;">
+                                        Validada el {{ \Carbon\Carbon::parse($primero->fecha_validacion)->format('d/m/Y H:i') }}
+                                    </p>
+                                @endif
+                            @else
+                                <p class="text-muted small mt-2 mb-0">
+                                    <i class="bi bi-qr-code me-1"></i>Muestra este código en la entrada
+                                </p>
+                                <p class="text-muted" style="font-size: 0.7rem;">Ref: #{{ $ids }}</p>
+                            @endif
                         </div>
 
                     </div>

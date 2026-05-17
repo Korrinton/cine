@@ -22,12 +22,14 @@ Plataforma que permite a los usuarios consultar la cartelera, seleccionar asient
 - Horarios de sesión automáticos según duración de la película
 - Precios dinámicos: descuento matinal, miércoles y recargo fin de semana
 - Panel de recaudación con gastos e ingresos extra
+- Pagos online mediante Stripe Checkout
 
 ## Tecnologías
 
 - **Backend:** PHP 8 · Laravel 11
 - **Frontend:** Blade · Bootstrap 5 · JavaScript
 - **Base de datos:** MySQL
+- **Pagos:** Stripe Checkout
 - **Servidor:** Nginx · Docker
 - **Despliegue:** VPS con Docker Compose
 
@@ -44,7 +46,7 @@ cd cine
 cp .env.example .env
 ```
 
-Edita `.env` con tus credenciales de base de datos y luego:
+Edita `.env` con tus credenciales de base de datos y las claves de Stripe, y luego:
 
 ```bash
 docker compose up -d
@@ -55,6 +57,8 @@ docker compose exec app php artisan storage:link
 ```
 
 La aplicación estará disponible en `http://localhost`.
+
+> **Stripe en modo test:** usa la tarjeta `4242 4242 4242 4242`, cualquier fecha futura y cualquier CVC.
 
 ## Estructura del proyecto
 

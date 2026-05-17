@@ -81,13 +81,15 @@
                     <a href="{{ route('reservas.mapa', $evento->id_eventos) }}{{ $fecha ? '?fecha='.$fecha.'&hora='.$hora : '' }}"
                        class="btn btn-outline-danger px-5 py-2">Cancelar</a>
 
-                    <form action="{{ route('reservas.store') }}" method="POST">
+                    <form action="{{ route('pago.checkout') }}" method="POST">
                         @csrf
                         <input type="hidden" name="id_evento" value="{{ $evento->id_eventos }}">
                         <input type="hidden" name="asientos_json" value="{{ json_encode($asientos) }}">
                         <input type="hidden" name="fecha_sesion" value="{{ $fecha }}">
                         <input type="hidden" name="hora_sesion"  value="{{ $hora }}">
-                        <button type="submit" class="btn btn-success px-5 py-2 shadow">Confirmar</button>
+                        <button type="submit" class="btn btn-success px-5 py-2 shadow">
+                            <i class="bi bi-credit-card me-2"></i>Pagar con Stripe
+                        </button>
                     </form>
                 </div>
             </div>
