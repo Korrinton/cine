@@ -1,59 +1,76 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tu Cine del Barrio
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicación web de gestión y reserva de entradas de cine desarrollada como proyecto académico.
 
-## About Laravel
+## Descripción
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Plataforma que permite a los usuarios consultar la cartelera, seleccionar asientos y comprar entradas online. Incluye un panel de administración para gestionar películas, eventos, salas y ver la recaudación.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Funcionalidades
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Usuarios
+- Registro e inicio de sesión
+- Consulta de cartelera con películas en proyección
+- Selección de fecha y horario de sesión
+- Elección de asientos en un mapa interactivo
+- Historial de compras
 
-## Learning Laravel
+### Administración
+- Gestión de películas (crear, eliminar)
+- Gestión de salas (crear, eliminar)
+- Gestión de eventos (crear, editar, eliminar) con control de solapamiento de salas
+- Horarios de sesión automáticos según duración de la película
+- Precios dinámicos: descuento matinal, miércoles y recargo fin de semana
+- Panel de recaudación con gastos e ingresos extra
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Tecnologías
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Backend:** PHP 8 · Laravel 11
+- **Frontend:** Blade · Bootstrap 5 · JavaScript
+- **Base de datos:** MySQL
+- **Servidor:** Nginx · Docker
+- **Despliegue:** VPS con Docker Compose
 
-## Laravel Sponsors
+## Instalación local
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Requisitos
+- Docker y Docker Compose
 
-### Premium Partners
+### Pasos
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+git clone <url-del-repositorio>
+cd cine
+cp .env.example .env
+```
 
-## Contributing
+Edita `.env` con tus credenciales de base de datos y luego:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+docker compose up -d
+docker compose exec app composer install
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate --seed
+docker compose exec app php artisan storage:link
+```
 
-## Code of Conduct
+La aplicación estará disponible en `http://localhost`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Estructura del proyecto
 
-## Security Vulnerabilities
+```
+cine/
+├── app/
+│   ├── Http/Controllers/   # Controladores (Admin, Reserva, Usuario...)
+│   └── Models/             # Modelos Eloquent
+├── resources/views/        # Vistas Blade
+│   ├── admin/              # Panel de administración
+│   └── reservas/           # Flujo de reserva
+├── routes/web.php          # Rutas
+├── database/migrations/    # Migraciones
+└── docker-compose.yml      # Configuración Docker
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Autor
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proyecto académico desarrollado por Ramón Berzosa Pedroche, Miguel Fernández Guerrero,Ángel Gil Moreno y Miguel Fernández Guerrero.
