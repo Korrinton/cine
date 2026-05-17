@@ -124,17 +124,27 @@
                             </ul>
 
                             @auth
-                                <button type="button"
-                                        class="btn btn-primary w-100"
-                                        onclick="abrirModalFecha(
-                                            {{ $evento->id_eventos }},
-                                            '{{ addslashes($evento->pelicula->titulo ?? 'Sin título') }}',
-                                            '{{ $evento->fecha_estreno }}',
-                                            '{{ $evento->fecha_final ?? $evento->fecha_estreno }}',
-                                            {{ $evento->sesiones->map(fn($s) => \Carbon\Carbon::parse($s->hora_inicio)->format('H:i'))->values()->toJson() }}
-                                        )">
-                                    <i class="bi bi-ticket me-1"></i>Comprar entradas
-                                </button>
+                                @php
+                                    $fechaFinalEvento = \Carbon\Carbon::parse($evento->fecha_final ?? $evento->fecha_estreno)->endOfDay();
+                                    $eventoTerminado  = \Carbon\Carbon::now()->gt($fechaFinalEvento);
+                                @endphp
+                                @if($eventoTerminado)
+                                    <button type="button" class="btn btn-secondary w-100" disabled>
+                                        <i class="bi bi-calendar-x me-1"></i>Evento finalizado
+                                    </button>
+                                @else
+                                    <button type="button"
+                                            class="btn btn-primary w-100"
+                                            onclick="abrirModalFecha(
+                                                {{ $evento->id_eventos }},
+                                                '{{ addslashes($evento->pelicula->titulo ?? 'Sin título') }}',
+                                                '{{ $evento->fecha_estreno }}',
+                                                '{{ $evento->fecha_final ?? $evento->fecha_estreno }}',
+                                                {{ $evento->sesiones->map(fn($s) => \Carbon\Carbon::parse($s->hora_inicio)->format('H:i'))->values()->toJson() }}
+                                            )">
+                                        <i class="bi bi-ticket me-1"></i>Comprar entradas
+                                    </button>
+                                @endif
                             @else
                                 <a href="{{ route('login') }}"
                                    class="btn btn-outline-primary w-100">
@@ -210,10 +220,13 @@
         document.getElementById('modalRangoDates').textContent =
             'Sesiones disponibles: ' + fmtMin + (fmtMin !== fmtMax ? ' – ' + fmtMax : '');
 
+        const today      = new Date().toISOString().substring(0, 10);
+        const effectiveMin = fechaMin.substring(0, 10) < today ? today : fechaMin.substring(0, 10);
+
         const input = document.getElementById('inputFecha');
-        input.min   = fechaMin.substring(0, 10);
+        input.min   = effectiveMin;
         input.max   = fechaMax.substring(0, 10);
-        input.value = fechaMin.substring(0, 10);
+        input.value = effectiveMin;
 
         document.getElementById('errorModal').classList.add('d-none');
         mostrarHoras();

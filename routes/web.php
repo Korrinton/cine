@@ -52,6 +52,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/eventos',             [AdminController::class, 'eventos'])->name('eventos');
     Route::get('/eventos/crear',       [AdminController::class, 'eventoCrear'])->name('eventos.crear');
     Route::post('/eventos',            [AdminController::class, 'eventoGuardar'])->name('eventos.guardar');
+    Route::get('/eventos/{id}/editar', [AdminController::class, 'eventoEditar'])->name('eventos.editar');
+    Route::put('/eventos/{id}',        [AdminController::class, 'eventoActualizar'])->name('eventos.actualizar');
     Route::delete('/eventos/{id}',     [AdminController::class, 'eventoEliminar'])->name('eventos.eliminar');
 
     // Películas

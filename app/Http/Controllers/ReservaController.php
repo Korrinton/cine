@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Reserva;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ReservaController extends Controller
 {
@@ -24,6 +25,20 @@ class ReservaController extends Controller
 
         $fecha = request()->query('fecha', $evento->fecha_estreno);
         $hora  = request()->query('hora');
+
+        $hoy       = Carbon::today();
+        $fechaFinal = Carbon::parse($evento->fecha_final ?? $evento->fecha_estreno)->endOfDay();
+
+        if (Carbon::parse($fecha)->lt($hoy)) {
+            return redirect('/')->withErrors(['error' => 'No puedes reservar para una fecha pasada.']);
+        }
+        if (Carbon::now()->gt($fechaFinal)) {
+            return redirect('/')->withErrors(['error' => 'Este evento ya ha finalizado.']);
+        }
+        if (Carbon::parse($fecha)->lt(Carbon::parse($evento->fecha_estreno)) ||
+            Carbon::parse($fecha)->gt(Carbon::parse($evento->fecha_final ?? $evento->fecha_estreno))) {
+            return redirect('/')->withErrors(['error' => 'La fecha seleccionada está fuera del rango del evento.']);
+        }
 
         $ocupados = Reserva::where('id_evento', $id_evento)
             ->where('fecha_sesion', $fecha)
@@ -45,6 +60,18 @@ class ReservaController extends Controller
 
         if (empty($asientos)) {
             return back()->withErrors(['error' => 'Selecciona al menos un asiento.']);
+        }
+
+        $eventoData = DB::table('eventos')->where('id_eventos', $id_evento)->first();
+        if ($eventoData) {
+            $hoy        = Carbon::today();
+            $fechaFinal = Carbon::parse($eventoData->fecha_final ?? $eventoData->fecha_estreno)->endOfDay();
+            if (Carbon::parse($fecha)->lt($hoy)) {
+                return back()->withErrors(['error' => 'No puedes reservar para una fecha pasada.']);
+            }
+            if (Carbon::now()->gt($fechaFinal)) {
+                return back()->withErrors(['error' => 'Este evento ya ha finalizado.']);
+            }
         }
 
         $yaTiene = Reserva::where('id_usuario', $id_usuario)
@@ -79,6 +106,18 @@ class ReservaController extends Controller
 
         if (empty($asientos)) {
             return back()->withErrors(['error' => 'Debes seleccionar al menos un asiento.']);
+        }
+
+        $eventoData = DB::table('eventos')->where('id_eventos', $id_evento)->first();
+        if ($eventoData) {
+            $hoy        = Carbon::today();
+            $fechaFinal = Carbon::parse($eventoData->fecha_final ?? $eventoData->fecha_estreno)->endOfDay();
+            if (Carbon::parse($fecha)->lt($hoy)) {
+                return back()->withErrors(['error' => 'No puedes reservar para una fecha pasada.']);
+            }
+            if (Carbon::now()->gt($fechaFinal)) {
+                return back()->withErrors(['error' => 'Este evento ya ha finalizado.']);
+            }
         }
 
         $yaTiene = Reserva::where('id_usuario', $id_usuario)

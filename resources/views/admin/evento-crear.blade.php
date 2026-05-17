@@ -106,7 +106,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="fecha_estreno" class="form-label">Fecha de inicio</label>
                         <input type="date" name="fecha_estreno" id="fecha_estreno" class="form-control"
-                            value="{{ old('fecha_estreno') }}" required>
+                            value="{{ old('fecha_estreno') }}" min="{{ date('Y-m-d') }}" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="fecha_final" class="form-label">Fecha de fin</label>

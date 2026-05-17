@@ -65,14 +65,20 @@
                                 @endforelse
                             </td>
                             <td class="text-end">
-                                <form action="{{ route('admin.eventos.eliminar', $evento->id_eventos) }}" method="POST"
-                                      onsubmit="return confirm('¿Eliminar este evento?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="bi bi-trash me-1"></i>Eliminar
-                                    </button>
-                                </form>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ route('admin.eventos.editar', $evento->id_eventos) }}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil me-1"></i>Editar
+                                    </a>
+                                    <form action="{{ route('admin.eventos.eliminar', $evento->id_eventos) }}" method="POST"
+                                          onsubmit="return confirm('¿Eliminar este evento?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash me-1"></i>Eliminar
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach

@@ -88,7 +88,7 @@ class AdminController extends Controller
             'imagen'        => 'nullable|image|max:2048',
             'id_sala'       => 'required|exists:salas,id_sala',
             'precio'        => 'required|numeric|min:0',
-            'fecha_estreno' => 'required|date',
+            'fecha_estreno' => 'required|date|after_or_equal:today',
             'fecha_final'   => 'required|date|after_or_equal:fecha_estreno',
             'horarios'      => 'required|array|min:1',
             'horarios.*'    => 'required|date_format:H:i',
@@ -136,6 +136,54 @@ class AdminController extends Controller
         }
 
         return redirect()->route('admin.eventos')->with('success', 'Evento creado correctamente.');
+    }
+
+    public function eventoEditar($id)
+    {
+        $evento          = Evento::with(['pelicula', 'sesiones'])->findOrFail($id);
+        $salas           = Sala::orderBy('nombre')->get();
+        $horariosActuales = $evento->sesiones->map(fn($s) => substr($s->hora_inicio, 0, 5))->toArray();
+        return view('admin.evento-editar', compact('evento', 'salas', 'horariosActuales'));
+    }
+
+    public function eventoActualizar(Request $request, $id)
+    {
+        $evento = Evento::findOrFail($id);
+
+        $request->validate([
+            'id_sala'       => 'required|exists:salas,id_sala',
+            'precio'        => 'required|numeric|min:0',
+            'fecha_estreno' => 'required|date|after_or_equal:today',
+            'fecha_final'   => 'required|date|after_or_equal:fecha_estreno',
+            'horarios'      => 'required|array|min:1',
+            'horarios.*'    => 'required|date_format:H:i',
+        ]);
+
+        $solapado = Evento::where('id_sala', $request->id_sala)
+            ->where('id_eventos', '!=', $id)
+            ->where('fecha_estreno', '<=', $request->fecha_final)
+            ->where('fecha_final',   '>=', $request->fecha_estreno)
+            ->exists();
+
+        if ($solapado) {
+            return back()->withInput()->withErrors([
+                'id_sala' => 'La sala ya tiene otro evento en ese rango de fechas.',
+            ]);
+        }
+
+        $evento->update([
+            'id_sala'       => $request->id_sala,
+            'precio'        => $request->precio,
+            'fecha_estreno' => $request->fecha_estreno,
+            'fecha_final'   => $request->fecha_final,
+        ]);
+
+        Sesion::where('id_evento', $id)->delete();
+        foreach ($request->horarios as $hora) {
+            Sesion::create(['id_evento' => $id, 'hora_inicio' => $hora]);
+        }
+
+        return redirect()->route('admin.eventos')->with('success', 'Evento actualizado correctamente.');
     }
 
     public function eventoEliminar($id)
