@@ -39,7 +39,7 @@ Plataforma que permite a los usuarios consultar la cartelera, seleccionar asient
 ### Pasos
 
 ```bash
-git clone <url-del-repositorio>
+gh repo clone Korrinton/cine
 cd cine
 cp .env.example .env
 ```
