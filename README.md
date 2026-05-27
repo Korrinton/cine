@@ -77,4 +77,4 @@ cine/
 
 ## Autor
 
-Proyecto académico desarrollado por Ramón Berzosa Pedroche, Miguel Fernández Guerrero,Ángel Gil Moreno y Miguel Fernández Guerrero.
+Proyecto académico desarrollado por Ramón Berzosa Pedroche, Miguel Fernández Guerrero,Ángel Gil Moreno y Enrique Pedregal Garrido.
